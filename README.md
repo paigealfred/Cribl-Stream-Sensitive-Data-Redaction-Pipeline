@@ -30,11 +30,11 @@ sensitive_test_logs.log
   Worker Group: default
   Pipeline: sensitive_data_redaction
         │
-        ├── Mask Function 1 → Credit Card Numbers → [CARD-REDACTED]
-        ├── Mask Function 2 → SSNs → [SSN-REDACTED]
-        ├── Mask Function 3 → Passwords → [REDACTED]
-        ├── Mask Function 4 → API Tokens → [TOKEN-REDACTED]
-        └── Mask Function 5 → Email Addresses → [EMAIL-REDACTED]
+        ├── Mask 1 → Credit Card Numbers → [CARD-REDACTED]
+        ├── Mask 2 → Social Security Numbers → [SSN-REDACTED]
+        ├── Mask 3 → Passwords → [REDACTED]
+        ├── Mask 4 → API Tokens → [TOKEN-REDACTED]
+        └── Mask 5 → Email Addresses → [EMAIL-REDACTED]
         │
         ▼
   Redacted output ready for downstream SIEM / data lake ingestion
@@ -44,7 +44,9 @@ sensitive_test_logs.log
 
 ## Sample Log Data (Before Redaction)
 
-Raw logs ingested into the pipeline containing multiple sensitive field types:
+Raw logs containing multiple sensitive field types across 6 events:
+
+![Raw Sample Logs](01-raw-sample-logs.png)
 
 ```
 2026-02-23 10:14:22 INFO  user=jsmith action=purchase card=4111111111111111 amount=59.99
@@ -55,29 +57,27 @@ Raw logs ingested into the pipeline containing multiple sensitive field types:
 2026-02-23 10:14:27 ERROR payment_failed card=378282246310005 error=declined user=tlee@gmail.com
 ```
 
-![Raw Sample Logs](01-raw-sample-logs.png)
-
 ---
 
-## Pipeline Configuration
+## Pipeline Setup
 
-### Importing Sample Data
-
-Sample log file loaded into Cribl Stream for pipeline testing and validation.
-
-![Import Sample Data](03-import-sample-data.png)
-
-### Pipeline Overview — All 5 Mask Functions Active
+### Pipeline Overview
 
 ![Pipeline Overview](02-pipeline-overview.png)
 
+### Importing Sample Data
+
+Sample log file loaded into Cribl Stream using the Import Sample Data screen with Break on newlines event breaker.
+
+![Import Sample Data](03-import-sample-data.png)
+
 ---
 
-## Mask Functions — Step by Step
+## Mask Functions — Configuration
 
 ### Mask 1 — Credit Card Numbers
 
-Regex matches major card formats (Visa, Mastercard, Amex, Discover) using Luhn-compatible pattern.
+Configured Luhn-format regex targeting Visa, Mastercard, Amex, and Discover card number patterns applied to the `_raw` field. Replacement expression set to `[CARD-REDACTED]`.
 
 ![Credit Card Mask](04-credit-card-mask.png)
 
@@ -85,7 +85,7 @@ Regex matches major card formats (Visa, Mastercard, Amex, Discover) using Luhn-c
 
 ### Mask 2 — Social Security Numbers
 
-Regex matches SSN format `XXX-XX-XXXX` using word boundary anchors to prevent partial matches.
+Configured regex `\b\d{3}-\d{2}-\d{4}\b` using word boundary anchors to match SSN format `XXX-XX-XXXX` applied to `_raw`. Replacement set to `[SSN-REDACTED]`.
 
 ![SSN Mask](05-ssn-mask.png)
 
@@ -93,41 +93,34 @@ Regex matches SSN format `XXX-XX-XXXX` using word boundary anchors to prevent pa
 
 ### Mask 3 — Passwords
 
-Regex matches `password=<any non-whitespace value>` and replaces the entire key-value pair.
+Configured regex `password=[^\s]+` to match the full `password=<value>` key-value pair applied to `_raw`. Replacement set to `password=[REDACTED]`.
 
-![Password Mask](06-password-mask.png)
+![Password Mask](07-password-mask.png)
 
 ---
 
 ### Mask 4 — API Tokens
 
-Regex matches `token=` and `api_key=` prefixes followed by alphanumeric token values including `sk-` prefixed keys.
+Configured regex matching `token=`, `api_key=`, and `sk-` prefixed values applied to `_raw`. Replacement set to `[TOKEN-REDACTED]`.
 
-![Token Mask](07-token-mask.png)
+![Token Mask](08-token-mask.png)
 
 ---
 
 ### Mask 5 — Email Addresses
 
-Regex matches standard email format `local@domain.tld` across all log events.
+Configured standard email regex `[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}` applied to `_raw`. Replacement set to `[EMAIL-REDACTED]`. All 5 mask functions now active in the pipeline.
 
-![Email Mask](08-email-mask.png)
-
----
-
-### All 5 Masks Active
-
-![All Masks Active](09-all-masks-active.png)
+![Email Mask](09-email-mask.png)
 
 ---
 
-## Output — After Redaction
+## Final Output — All Fields Redacted
 
-All sensitive fields replaced inline. Downstream systems receive clean, compliant log data with no PII, PCI, or PHI exposure.
+All sensitive fields replaced inline across all 6 log events.
 
 ![Redacted Output](10-redacted-output.png)
 
-**Redacted output sample:**
 ```
 user=jsmith action=purchase card=[CARD-REDACTED] amount=59.99
 user=mwilliams ssn=[SSN-REDACTED] account_verified=true
@@ -171,5 +164,5 @@ Pipeline exported from Cribl Stream and stored for version control and redeploym
 
 - Sensitive data can be masked **in transit** before reaching any storage destination
 - Cribl's Mask function applies regex rules inline with zero impact on log structure
-- A single pipeline can handle multiple data types simultaneously
+- A single pipeline handles multiple sensitive data types simultaneously
 - Pipeline config is exportable as JSON for version control and redeployment across environments
