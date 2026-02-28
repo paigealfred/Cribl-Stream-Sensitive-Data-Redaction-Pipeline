@@ -87,7 +87,7 @@ Configured Luhn-format regex targeting Visa, Mastercard, Amex, and Discover card
 
 Configured regex `\b\d{3}-\d{2}-\d{4}\b` using word boundary anchors to match SSN format `XXX-XX-XXXX` applied to `_raw`. Replacement set to `[SSN-REDACTED]`.
 
-![SSN Mask](05-ssn-mask.png)
+![SSN Mask](06-ssn-mask.png)
 
 ---
 
