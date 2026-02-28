@@ -55,7 +55,7 @@ Raw logs ingested into the pipeline containing multiple sensitive field types:
 2026-02-23 10:14:27 ERROR payment_failed card=378282246310005 error=declined user=tlee@gmail.com
 ```
 
-![Raw Sample Logs](screenshots/01-raw-sample-logs.png)
+![Raw Sample Logs](01-raw-sample-logs.png)
 
 ---
 
@@ -65,11 +65,11 @@ Raw logs ingested into the pipeline containing multiple sensitive field types:
 
 Sample log file loaded into Cribl Stream for pipeline testing and validation.
 
-![Import Sample Data](screenshots/03-import-sample-data.png)
+![Import Sample Data](03-import-sample-data.png)
 
 ### Pipeline Overview — All 5 Mask Functions Active
 
-![Pipeline Overview](screenshots/02-pipeline-overview.png)
+![Pipeline Overview](02-pipeline-overview.png)
 
 ---
 
@@ -79,7 +79,7 @@ Sample log file loaded into Cribl Stream for pipeline testing and validation.
 
 Regex matches major card formats (Visa, Mastercard, Amex, Discover) using Luhn-compatible pattern.
 
-![Credit Card Mask](screenshots/04-credit-card-mask.png)
+![Credit Card Mask](04-credit-card-mask.png)
 
 ---
 
@@ -87,7 +87,7 @@ Regex matches major card formats (Visa, Mastercard, Amex, Discover) using Luhn-c
 
 Regex matches SSN format `XXX-XX-XXXX` using word boundary anchors to prevent partial matches.
 
-![SSN Mask](screenshots/05-ssn-mask.png)
+![SSN Mask](05-ssn-mask.png)
 
 ---
 
@@ -95,7 +95,7 @@ Regex matches SSN format `XXX-XX-XXXX` using word boundary anchors to prevent pa
 
 Regex matches `password=<any non-whitespace value>` and replaces the entire key-value pair.
 
-![Password Mask](screenshots/06-password-mask.png)
+![Password Mask](06-password-mask.png)
 
 ---
 
@@ -103,7 +103,7 @@ Regex matches `password=<any non-whitespace value>` and replaces the entire key-
 
 Regex matches `token=` and `api_key=` prefixes followed by alphanumeric token values including `sk-` prefixed keys.
 
-![Token Mask](screenshots/07-token-mask.png)
+![Token Mask](07-token-mask.png)
 
 ---
 
@@ -111,13 +111,13 @@ Regex matches `token=` and `api_key=` prefixes followed by alphanumeric token va
 
 Regex matches standard email format `local@domain.tld` across all log events.
 
-![Email Mask](screenshots/08-email-mask.png)
+![Email Mask](08-email-mask.png)
 
 ---
 
 ### All 5 Masks Active
 
-![All Masks Active](screenshots/09-all-masks-active.png)
+![All Masks Active](09-all-masks-active.png)
 
 ---
 
@@ -125,7 +125,7 @@ Regex matches standard email format `local@domain.tld` across all log events.
 
 All sensitive fields replaced inline. Downstream systems receive clean, compliant log data with no PII, PCI, or PHI exposure.
 
-![Redacted Output](screenshots/10-redacted-output.png)
+![Redacted Output](10-redacted-output.png)
 
 **Redacted output sample:**
 ```
@@ -143,8 +143,8 @@ payment_failed card=[CARD-REDACTED] error=declined user=[EMAIL-REDACTED]
 
 Pipeline exported from Cribl Stream and stored for version control and redeployment.
 
-![Pipeline JSON in Cribl](screenshots/11-pipeline-json-cribl.png)
-![Pipeline JSON in VS Code](screenshots/12-pipeline-json-vscode.png)
+![Pipeline JSON in Cribl](11-pipeline-json-cribl.png)
+![Pipeline JSON in VS Code](12-pipeline-json-vscode.png)
 
 ---
 
